@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benjamin Clark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Rajdhani:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #000000;
+            --deep-charcoal: #0d0d0d;
+            --ash: #c4c4c4;
+            --shadow: #1a1a1a;
+            --blood: #9a1a1a;
+            --muted: #5a5a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: var(--deep-charcoal);
+            color: var(--ash);
+            line-height: 1.8;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Atmospheric overlays */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+            z-index: 9999;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.02;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.1) 2px, rgba(255, 255, 255, 0.1) 4px);
+            z-index: 9998;
+        }
+
+        /* Navigation - Minimal */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(154, 26, 26, 0.2);
+            padding: 2rem 3rem;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: flex-end;
+            gap: 3rem;
+            list-style: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        nav a {
+            color: var(--ash);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.4s ease;
+            opacity: 0.7;
+        }
+
+        nav a:hover {
+            color: var(--blood);
+            opacity: 1;
+        }
+
+        /* Hero - Sparse */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hero h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            color: var(--ash);
+            margin-bottom: 3rem;
+            text-shadow: 0 0 30px rgba(154, 26, 26, 0.3);
+            animation: pulseGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { 
+                text-shadow: 0 0 30px rgba(154, 26, 26, 0.3);
+            }
+            50% { 
+                text-shadow: 0 0 40px rgba(154, 26, 26, 0.5), 0 0 60px rgba(154, 26, 26, 0.2);
+            }
+        }
+
+        .tone-line {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            font-style: italic;
+            color: var(--muted);
+            font-weight: 400;
+            max-width: 600px;
+            line-height: 2;
+            opacity: 0;
+            animation: fadeInUp 2s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* About Section - Controlled */
+        .about {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem;
+        }
+
+        .about-content {
+            max-width: 700px;
+            font-size: 1.2rem;
+            line-height: 2.2;
+        }
+
+        .about-content p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .about-content p:first-child::first-letter {
+            font-size: 3.5rem;
+            line-height: 1;
+            float: left;
+            margin-right: 0.5rem;
+            color: var(--blood);
+        }
+
+        /* Section Headings */
+        h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            letter-spacing: 0.15em;
+            margin-bottom: 4rem;
+            text-align: center;
+            color: var(--ash);
+            opacity: 0.8;
+        }
+
+        /* Footer - Hidden Signup */
+        footer {
+            background: var(--black);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(154, 26, 26, 0.2);
+        }
+
+        .newsletter-signup {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .email-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--shadow);
+            color: var(--ash);
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--blood);
+            box-shadow: 0 0 10px rgba(154, 26, 26, 0.2);
+        }
+
+        .email-input::placeholder {
+            color: var(--muted);
+            opacity: 0.5;
+        }
+
+        .submit-btn {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 1px solid var(--shadow);
+            color: var(--ash);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .submit-btn:hover {
+            border-color: var(--blood);
+            background: var(--blood);
+            opacity: 1;
+            box-shadow: 0 0 15px rgba(154, 26, 26, 0.3);
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            opacity: 0.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 1.5rem;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+                font-size: 0.8rem;
+            }
+
+            .hero h1 {
+                margin-bottom: 2rem;
+            }
+
+            .about {
+                padding: 4rem 1.5rem;
+            }
+
+            .about-content {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Hidden project page styles (for future use) */
+        .project-page {
+            display: none; /* Hidden until ready */
+            min-height: 100vh;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .project-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .project-symbol {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 3rem;
+            opacity: 0.3;
+        }
+
+        .project-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            text-align: center;
+            letter-spacing: 0.1em;
+            margin-bottom: 4rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Benjamin Clark</h1>
+        <p class="tone-line">Not all nightmares end when you open your eyes.</p>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2>About</h2>
+            <p>There are nightmares we wake from, and then there are the ones that bleed into daylight. Benjamin Clark writes at the razor's edge where trauma fractures reality, where the past refuses to stay buried, and where grief becomes something darker—something that hunts.</p>
+            
+            <p>His work explores the psychology of inherited violence, the weight of suppressed memories, and the moments when the veil between what we know and what we fear becomes dangerously thin. Through visceral first-person narratives, he examines how tragedy reshapes identity and how secrets—family secrets especially—can become their own kind of haunting.</p>
+            
+            <p>What remains unspoken always finds a way to surface. And when it does, you won't look away.</p>
+        </div>
+    </section>
+
+    <!-- Footer with Hidden Newsletter -->
+    <footer>
+        <div class="newsletter-signup">
+            <label class="newsletter-label">For those who notice</label>
+            <form>
+                <input type="email" class="email-input" placeholder="your@email.com" required>
+                <br>
+                <button type="submit" class="submit-btn">Enter</button>
+            </form>
+        </div>
+        <p class="footer-note">&copy; 2026 Benjamin Clark</p>
+    </footer>
+
+    <!-- Hidden Project Page (Unlinked, for future use) -->
+    <section class="project-page" id="project">
+        <div class="project-content">
+            <div class="project-symbol">◆</div>
+            <h1 class="project-title">[Title Reveal]</h1>
+            <!-- Future content: trailer, excerpts, etc. -->
+        </div>
+    </section>
+
+</body>
+</html>
