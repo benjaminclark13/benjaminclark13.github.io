@@ -119,16 +119,40 @@
             letter-spacing: 0.15em;
             color: var(--ash);
             margin-bottom: 3rem;
-            text-shadow: 0 0 30px rgba(154, 26, 26, 0.3);
+            text-shadow: 
+                0 0 25px rgba(154, 26, 26, 0.25),
+                0 0 50px rgba(154, 26, 26, 0.4),
+                0 0 75px rgba(154, 26, 26, 0.2);
             animation: pulseGlow 6s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero h1::before {
+            content: 'Benjamin Clark';
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -1;
+            color: transparent;
+            text-shadow: 
+                0 0 35px rgba(154, 26, 26, 0.6),
+                0 0 70px rgba(154, 26, 26, 0.4),
+                0 0 100px rgba(154, 26, 26, 0.25);
         }
 
         @keyframes pulseGlow {
             0%, 100% { 
-                text-shadow: 0 0 30px rgba(154, 26, 26, 0.3);
+                text-shadow: 
+                    0 0 25px rgba(154, 26, 26, 0.25),
+                    0 0 50px rgba(154, 26, 26, 0.4),
+                    0 0 75px rgba(154, 26, 26, 0.2);
             }
             50% { 
-                text-shadow: 0 0 40px rgba(154, 26, 26, 0.5), 0 0 60px rgba(154, 26, 26, 0.2);
+                text-shadow: 
+                    0 0 35px rgba(154, 26, 26, 0.4),
+                    0 0 70px rgba(154, 26, 26, 0.6),
+                    0 0 105px rgba(154, 26, 26, 0.35),
+                    0 0 140px rgba(154, 26, 26, 0.2);
             }
         }
 
