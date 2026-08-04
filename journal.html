@@ -197,7 +197,7 @@ function relatedRow(num, isNext){
   const title = rec ? rec.title : null;
   const label = isNext
     ? 'Continue to File No. ' + pad(num)
-    : 'File No. ' + pad(num) + (title ? ' — ' + title : '');
+    : 'File No. ' + pad(num);
   if (available){
     return '<a class="rfile" href="#" data-file="' + num + '">'
       + '<span class="name"><span class="arrow">&#9658;</span>' + label + '</span>'
