@@ -76,6 +76,24 @@ main{max-width:1100px;margin:0 auto;padding:0 1.5rem 8rem}
   text-decoration:none;border-bottom:1px solid var(--rule)}
 .source:hover{color:var(--bone)}
 
+.related{margin-top:2.75rem;border-top:1px solid var(--rule);padding-top:1.6rem}
+.related .rlabel{font-family:'Rajdhani',sans-serif;font-size:.66rem;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem}
+.rfile{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  padding:.6rem 0;border-bottom:1px solid rgba(232,230,227,.05);
+  font-family:'Rajdhani',sans-serif;font-size:.82rem;letter-spacing:.05em;text-decoration:none}
+.rfile:last-child{border-bottom:none}
+.rfile .name{color:var(--bone);transition:color .25s ease}
+.rfile .arrow{color:var(--ember);margin-right:.6rem}
+a.rfile:hover .name{color:var(--ember)}
+.rfile .rstatus{font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  white-space:nowrap}
+.rfile .rstatus.available{color:var(--smoke)}
+.rfile .rstatus.classified{color:var(--ember)}
+.rfile.locked{cursor:default}
+.rfile.locked .arrow{color:var(--blood)}
+.rfile.locked .name{color:var(--dim)}
+
 .state{padding:6rem 0;color:var(--smoke);font-style:italic;text-align:center}
 .state.error{font-style:normal;font-family:'Rajdhani',sans-serif;letter-spacing:.06em}
 .state .diamond{color:var(--blood);display:block;margin-bottom:1rem;font-style:normal}
@@ -143,6 +161,7 @@ const PER_PAGE  = 10;
 
 let startIndex = 1;
 let total = null;
+const filesByNo = {};
 const feedEl  = document.getElementById('feed');
 const moreEl  = document.getElementById('more');
 const countEl = document.getElementById('count');
@@ -172,6 +191,30 @@ function excerptFrom(html){
   return text.length > 260 ? text.slice(0,260).replace(/\s\S*$/,'') + '…' : text;
 }
 
+function relatedRow(num, isNext){
+  const available = num >= 1 && total && num <= total;
+  const rec = filesByNo[num];
+  const title = rec ? rec.title : null;
+  const label = isNext
+    ? 'Continue to File No. ' + pad(num)
+    : 'File No. ' + pad(num) + (title ? ' — ' + title : '');
+  if (available){
+    return '<a class="rfile" href="#" data-file="' + num + '">'
+      + '<span class="name"><span class="arrow">&#9658;</span>' + label + '</span>'
+      + '<span class="rstatus available">Available</span></a>';
+  }
+  return '<div class="rfile locked">'
+    + '<span class="name"><span class="arrow">&#9658;</span>' + label + '</span>'
+    + '<span class="rstatus classified">Classified</span></div>';
+}
+
+function buildRelated(n){
+  const rows = [];
+  [n - 2, n - 1].forEach(num => { if (num >= 1) rows.push(relatedRow(num, false)); });
+  rows.push(relatedRow(n + 1, true));
+  return '<div class="related"><div class="rlabel">Related files</div>' + rows.join('') + '</div>';
+}
+
 function render(entries, offset){
   entries.forEach((entry, i) => {
     const title  = entry.title.$t || 'Untitled';
@@ -181,9 +224,12 @@ function render(entries, offset){
     const id     = slug(entry.id.$t);
     const fileNo = total ? total - (offset + i) : (offset + i + 1);
 
+    filesByNo[fileNo] = { id: id, title: title };
+
     const art = document.createElement('article');
     art.className = 'post';
     art.id = id;
+    art.dataset.fileno = fileNo;
     art.innerHTML = `
       <div class="stamp">
         <span class="no">File No. ${pad(fileNo)}</span>
@@ -206,12 +252,34 @@ function render(entries, offset){
       const open = art.classList.toggle('open');
       btn.setAttribute('aria-expanded', String(open));
       btn.textContent = open ? 'Close the file' : 'Open the file';
+      if (open && !art.dataset.related){
+        art.dataset.related = '1';
+        const wrap = document.createElement('div');
+        wrap.innerHTML = buildRelated(parseInt(art.dataset.fileno, 10));
+        art.querySelector('.content').appendChild(wrap.firstElementChild);
+      }
       if (!open) art.scrollIntoView({ block:'start' });
     });
 
     feedEl.appendChild(art);
   });
 }
+
+async function goToFile(n){
+  while (!filesByNo[n] && !moreEl.hidden){ await load(); }
+  const rec = filesByNo[n];
+  if (!rec) return;
+  const el = document.getElementById(rec.id);
+  if (el){
+    if (!el.classList.contains('open')) el.querySelector('.toggle').click();
+    el.scrollIntoView({ block:'start' });
+  }
+}
+
+feedEl.addEventListener('click', e => {
+  const a = e.target.closest('a.rfile[data-file]');
+  if (a){ e.preventDefault(); goToFile(parseInt(a.dataset.file, 10)); }
+});
 
 async function load(){
   moreEl.disabled = true;
