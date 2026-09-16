@@ -64,49 +64,22 @@ main{max-width:1100px;margin:0 auto;padding:0 1.5rem 8rem}
 .post h2 a{color:var(--bone);text-decoration:none;transition:color .3s ease}
 .post h2 a:hover{color:var(--ember)}
 .excerpt{color:var(--smoke);margin-top:1rem;max-width:62ch}
-.body{display:none;margin-top:1.75rem;max-width:62ch;border-left:1px solid var(--rule);padding-left:1.75rem}
-.post.open .body{display:block}
-.post.open .excerpt{display:none}
-.body p{margin-bottom:1.3rem}
-.body h2,.body h3,.body h4{font-weight:400;margin:2.2rem 0 .9rem;line-height:1.25}
-.body a{color:var(--ember);text-decoration:none;border-bottom:1px solid rgba(193,18,31,.35)}
-.body img{max-width:100%;height:auto;display:block;margin:2rem 0;filter:saturate(.8)}
-.body blockquote{border-left:2px solid var(--blood);padding-left:1.4rem;font-style:italic;
-  color:var(--smoke);margin:1.8rem 0}
-.body ul,.body ol{margin:0 0 1.3rem 1.3rem}
-.body li{margin-bottom:.5rem}
 
-.toggle{margin-top:1.6rem;background:none;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;
+.toggle{display:inline-block;text-decoration:none;margin-top:1.6rem;background:none;border:none;
+  cursor:pointer;font-family:'Rajdhani',sans-serif;
   font-size:.72rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--ember);
   padding:.4rem 0;border-bottom:1px solid transparent;transition:border-color .3s ease}
 .toggle:hover{border-bottom-color:var(--ember)}
 .toggle:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--ember);outline-offset:4px}
-.source{display:inline-block;margin-top:1.4rem;font-family:'Rajdhani',sans-serif;font-size:.68rem;
-  font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
-  text-decoration:none;border-bottom:1px solid var(--rule)}
-.source:hover{color:var(--bone)}
-
-.related{margin-top:2.75rem;border-top:1px solid var(--rule);padding-top:1.6rem}
-.related .rlabel{font-family:'Rajdhani',sans-serif;font-size:.66rem;font-weight:700;
-  letter-spacing:.3em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem}
-.rfile{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-  padding:.6rem 0;border-bottom:1px solid rgba(232,230,227,.05);
-  font-family:'Rajdhani',sans-serif;font-size:.82rem;letter-spacing:.05em;text-decoration:none}
-.rfile:last-child{border-bottom:none}
-.rfile .name{color:var(--bone);transition:color .25s ease}
-.rfile .arrow{color:var(--ember);margin-right:.6rem}
-a.rfile:hover .name{color:var(--ember)}
-.rfile .rstatus{font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
-  white-space:nowrap}
-.rfile .rstatus.available{color:var(--smoke)}
-.rfile .rstatus.classified{color:var(--ember)}
-.rfile.locked{cursor:default}
-.rfile.locked .arrow{color:var(--blood)}
-.rfile.locked .name{color:var(--dim)}
 
 .state{padding:6rem 0;color:var(--smoke);font-style:italic;text-align:center}
 .state.error{font-style:normal;font-family:'Rajdhani',sans-serif;letter-spacing:.06em}
 .state .diamond{color:var(--blood);display:block;margin-bottom:1rem;font-style:normal}
+.state .source{display:inline-block;margin-top:1.4rem;font-family:'Rajdhani',sans-serif;font-size:.68rem;
+  font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  text-decoration:none;border-bottom:1px solid var(--rule)}
+.state .source:hover{color:var(--bone)}
+
 #more{display:block;margin:4rem auto 0;background:none;border:1px solid var(--rule);color:var(--bone);
   cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.24em;
   text-transform:uppercase;padding:1rem 2.5rem;transition:border-color .3s ease,color .3s ease}
@@ -120,7 +93,6 @@ footer{border-top:1px solid var(--rule);padding:3rem 1.5rem;text-align:center;
   .strip .bar{gap:1.2rem;font-size:.65rem}
   .post{grid-template-columns:1fr;gap:.9rem}
   .stamp{padding-top:0;line-height:1.9}
-  .body{padding-left:1.1rem}
   nav .inner{flex-direction:column;align-items:flex-start;gap:.7rem}
 }
 @media (prefers-reduced-motion:reduce){
@@ -171,7 +143,6 @@ const PER_PAGE  = 10;
 
 let startIndex = 1;
 let total = null;
-const filesByNo = {};
 const feedEl  = document.getElementById('feed');
 const moreEl  = document.getElementById('more');
 const countEl = document.getElementById('count');
@@ -201,40 +172,14 @@ function excerptFrom(html){
   return text.length > 260 ? text.slice(0,260).replace(/\s\S*$/,'') + '…' : text;
 }
 
-function relatedRow(num, isNext){
-  const available = num >= 1 && total && num <= total;
-  const rec = filesByNo[num];
-  const title = rec ? rec.title : null;
-  const label = isNext
-    ? 'Continue to File No. ' + pad(num)
-    : 'File No. ' + pad(num);
-  if (available){
-    return '<a class="rfile" href="#" data-file="' + num + '">'
-      + '<span class="name"><span class="arrow">&#9658;</span>' + label + '</span>'
-      + '<span class="rstatus available">Available</span></a>';
-  }
-  return '<div class="rfile locked">'
-    + '<span class="name"><span class="arrow">&#9658;</span>' + label + '</span>'
-    + '<span class="rstatus classified">Classified</span></div>';
-}
-
-function buildRelated(n){
-  const rows = [];
-  [n - 2, n - 1].forEach(num => { if (num >= 1) rows.push(relatedRow(num, false)); });
-  rows.push(relatedRow(n + 1, true));
-  return '<div class="related"><div class="rlabel">Related files</div>' + rows.join('') + '</div>';
-}
-
 function render(entries, offset){
   entries.forEach((entry, i) => {
     const title  = entry.title.$t || 'Untitled';
     const html   = (entry.content && entry.content.$t) || (entry.summary && entry.summary.$t) || '';
-    const link   = (entry.link.find(l => l.rel === 'alternate') || {}).href || '#';
     const labels = (entry.category || []).map(c => c.term);
     const id     = slug(entry.id.$t);
     const fileNo = total ? total - (offset + i) : (offset + i + 1);
-
-    filesByNo[fileNo] = { id: id, title: title };
+    const href   = 'file.html?no=' + pad(fileNo);
 
     const art = document.createElement('article');
     art.className = 'post';
@@ -247,49 +192,16 @@ function render(entries, offset){
         ${labels.length ? `<span class="tags">${labels.map(l => '◆ ' + l).join('<br>')}</span>` : ''}
       </div>
       <div class="content">
-        <h2><a href="#${id}">${title}</a></h2>
+        <h2><a href="${href}">${title}</a></h2>
         <div class="excerpt"></div>
-        <div class="body"></div>
-        <button class="toggle" aria-expanded="false">Open the file</button><br>
-        <a class="source" href="${link}" target="_blank" rel="noopener">View original ↗</a>
+        <a class="toggle" href="${href}">Open the file</a>
       </div>`;
 
     art.querySelector('.excerpt').textContent = excerptFrom(html);
-    art.querySelector('.body').innerHTML = html;
-
-    const btn = art.querySelector('.toggle');
-    btn.addEventListener('click', () => {
-      const open = art.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'Close the file' : 'Open the file';
-      if (open && !art.dataset.related){
-        art.dataset.related = '1';
-        const wrap = document.createElement('div');
-        wrap.innerHTML = buildRelated(parseInt(art.dataset.fileno, 10));
-        art.querySelector('.content').appendChild(wrap.firstElementChild);
-      }
-      if (!open) art.scrollIntoView({ block:'start' });
-    });
 
     feedEl.appendChild(art);
   });
 }
-
-async function goToFile(n){
-  while (!filesByNo[n] && !moreEl.hidden){ await load(); }
-  const rec = filesByNo[n];
-  if (!rec) return;
-  const el = document.getElementById(rec.id);
-  if (el){
-    if (!el.classList.contains('open')) el.querySelector('.toggle').click();
-    el.scrollIntoView({ block:'start' });
-  }
-}
-
-feedEl.addEventListener('click', e => {
-  const a = e.target.closest('a.rfile[data-file]');
-  if (a){ e.preventDefault(); goToFile(parseInt(a.dataset.file, 10)); }
-});
 
 async function load(){
   moreEl.disabled = true;
@@ -317,11 +229,6 @@ async function load(){
     startIndex += entries.length;
     moreEl.hidden = entries.length < PER_PAGE;
     moreEl.disabled = false;
-
-    if (location.hash){
-      const target = document.querySelector(location.hash);
-      if (target && !target.classList.contains('open')) target.querySelector('.toggle').click();
-    }
   } catch (err){
     if (startIndex === 1){
       feedEl.innerHTML = '<div class="state error"><span class="diamond">◆</span>'
